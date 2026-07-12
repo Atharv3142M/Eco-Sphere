@@ -8,10 +8,10 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = !!sessionToken || typeof window !== 'undefined' && localStorage.getItem('sessionToken')
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/auth/login', '/auth/signup', '/']
+  const publicRoutes = ['/auth/login', '/auth/signup', '/', '/api/auth/login', '/api/auth/signup']
 
   // Check if current route is public
-  const isPublicRoute = publicRoutes.includes(pathname)
+  const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/api/auth/')
 
   // Redirect to login if accessing protected route without auth
   if (!isPublicRoute && !isAuthenticated) {
