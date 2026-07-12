@@ -28,7 +28,27 @@ export function LoginForm() {
     }
 
     try {
+      // Call login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Login failed')
+      }
+
+      const data = await response.json()
+      
+      // Store user in localStorage
+      localStorage.setItem('user', JSON.stringify(data.user))
+      localStorage.setItem('sessionToken', `token_${Date.now()}`)
+      
+      // Use the auth context to update state
       await login(email, password)
+      
       router.replace('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid email or password')
@@ -82,6 +102,7 @@ export function LoginForm() {
             type="submit"
             className="w-full"
             disabled={isLoading}
+            onClick={(e) => handleSubmit(e as any)}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Signing in...' : 'Sign in'}
