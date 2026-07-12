@@ -29,7 +29,10 @@ export function LoginForm() {
 
     try {
       await login(email, password)
-      router.push('/dashboard')
+      // Redirect after login is complete
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 500)
     } catch (err) {
       setError('Invalid email or password')
     }

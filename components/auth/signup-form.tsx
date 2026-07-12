@@ -78,7 +78,10 @@ export function SignupForm() {
         formData.role,
         formData.department
       )
-      router.push('/dashboard')
+      // Redirect after signup is complete
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 500)
     } catch (err) {
       setError('Failed to create account')
     }

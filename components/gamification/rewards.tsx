@@ -74,13 +74,23 @@ export function Rewards() {
   const userXP = 3500
   const [loadingRewards, setLoadingRewards] = useState<string[]>([])
 
-  const handleRedeem = async (rewardId: string, cost: number) => {
+  const handleRedeem = async (rewardId: string, cost: number, rewardName: string) => {
     setLoadingRewards(prev => [...prev, rewardId])
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    setLoadingRewards(prev => prev.filter(id => id !== rewardId))
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Log redemption
+      console.log(`Successfully redeemed: ${rewardName} for ${cost} XP`)
+      
+      // In production, would also:
+      // - Deduct XP from user
+      // - Send confirmation email
+      // - Track in analytics
+    } finally {
+      setLoadingRewards(prev => prev.filter(id => id !== rewardId))
+    }
   }
 
   return (
@@ -147,7 +157,7 @@ export function Rewards() {
                     loadingText="Redeeming..."
                     successText="Redeemed!"
                     successDuration={2000}
-                    onClick={() => handleRedeem(reward.id, reward.cost)}
+                    onClick={() => handleRedeem(reward.id, reward.cost, reward.name)}
                   >
                     Redeem
                   </DynamicButton>
