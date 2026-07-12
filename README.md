@@ -83,7 +83,7 @@ EcoSphere addresses these challenges by providing a unified platform that integr
 
 ### Employee
 
-Employees can participate in ESG initiatives, complete sustainability challenges, upload activity proof, monitor personal progress, earn rewards, and track achievements.
+Employees can participate in ESG initiatives, complete sustainability challenges, upload activity proof, monitor personal progress, earn rewards, and track achievements as well as Redeem Real life rewards.
 
 ### Department Manager
 
