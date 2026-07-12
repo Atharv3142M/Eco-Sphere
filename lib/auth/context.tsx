@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, UserRole, AuthContextType } from '@/types/auth'
+import { validateCredentials, registerNewAccount } from './mock-accounts'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -29,32 +30,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800))
+      // Validate credentials against mock accounts
+      const account = validateCredentials(email, password)
       
-      // Mock user - in production, verify against backend
-      const mockUser: User = {
+      if (!account) {
+        throw new Error('Invalid email or password')
+      }
+
+      const user: User = {
         id: Math.random().toString(36).substr(2, 9),
-        email,
-        name: email.split('@')[0],
-        role: UserRole.EMPLOYEE,
-        department: 'Operations',
+        email: account.email,
+        name: account.name,
+        role: account.role,
+        department: account.department,
         createdAt: new Date(),
       }
 
-      localStorage.setItem('user', JSON.stringify(mockUser))
+      // Store user in localStorage
+      localStorage.setItem('user', JSON.stringify(user))
       localStorage.setItem('sessionToken', `token_${Date.now()}`)
-      setUser(mockUser)
+      
+      // Update state
+      setUser(user)
+      return true
+    } catch (error) {
+      localStorage.removeItem('user')
+      localStorage.removeItem('sessionToken')
+      setUser(null)
+      throw error
     } finally {
       setIsLoading(false)
     }
   }
 
-  const signup = async (email: string, password: string, name: string, role: UserRole, department?: string) => {
+  const signup = async (email: string, password: string, name: string, role: UserRole, department: string = 'Operations') => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800))
+      // Register new account
+      const registered = registerNewAccount({
+        email,
+        password,
+        name,
+        role,
+        department,
+      })
+
+      if (!registered) {
+        throw new Error('Email already registered')
+      }
 
       const newUser: User = {
         id: Math.random().toString(36).substr(2, 9),
@@ -65,9 +88,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         createdAt: new Date(),
       }
 
+      // Store user in localStorage
       localStorage.setItem('user', JSON.stringify(newUser))
       localStorage.setItem('sessionToken', `token_${Date.now()}`)
+      
+      // Update state
       setUser(newUser)
+      return true
+    } catch (error) {
+      localStorage.removeItem('user')
+      localStorage.removeItem('sessionToken')
+      setUser(null)
+      throw error
     } finally {
       setIsLoading(false)
     }
