@@ -95,58 +95,16 @@ export const INSIGHTS: Insight[] = [
   },
 ]
 
-export const CARBON_TREND: CarbonTrendPoint[] = [
-  {
-    month: 'Jan',
-    emissions: 620,
-    target: 600,
-    topSource: 'Manufacturing',
-    topDepartment: 'Operations',
-    reason: 'Peak production cycle',
-  },
-  {
-    month: 'Feb',
-    emissions: 540,
-    target: 580,
-    topSource: 'Fleet',
-    topDepartment: 'Logistics',
-    reason: 'Expanded delivery routes',
-  },
-  {
-    month: 'Mar',
-    emissions: 470,
-    target: 560,
-    topSource: 'Purchases',
-    topDepartment: 'Procurement',
-    reason: 'Bulk raw material orders',
-  },
-  {
-    month: 'Apr',
-    emissions: 430,
-    target: 540,
-    topSource: 'Fleet',
-    topDepartment: 'Logistics',
-    reason: 'Route optimization rollout',
-  },
-  {
-    month: 'May',
-    emissions: 390,
-    target: 520,
-    topSource: 'Manufacturing',
-    topDepartment: 'Operations',
-    reason: 'Efficiency upgrades',
-  },
-  {
-    month: 'Jun',
-    emissions: 355,
-    target: 500,
-    topSource: 'Expenses',
-    topDepartment: 'Sales',
-    reason: 'Reduced business travel',
-  },
+export const carbonTrend: Array<{ month: string; actual: number; target: number }> = [
+  { month: 'Jan', actual: 620, target: 600 },
+  { month: 'Feb', actual: 540, target: 580 },
+  { month: 'Mar', actual: 470, target: 560 },
+  { month: 'Apr', actual: 430, target: 540 },
+  { month: 'May', actual: 390, target: 520 },
+  { month: 'Jun', actual: 355, target: 500 },
 ]
 
-export const DEPARTMENT_RANKS: DepartmentRank[] = [
+export const departmentRankings: DepartmentRank[] = [
   {
     rank: 1,
     name: 'Finance',
