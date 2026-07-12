@@ -1,25 +1,44 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Poppins, Inter, IBM_Plex_Sans } from 'next/font/google'
+import { Poppins, Inter, IBM_Plex_Sans, Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AuthProvider } from '@/lib/auth/context'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
+// Primary heading font (modern and clean)
+const geist = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist',
+  display: 'swap',
+})
+
+// Body font (modern and readable)
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
+  display: 'swap',
+})
+
+// Fallback fonts
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['500', '600', '700'],
   variable: '--font-poppins',
+  display: 'swap',
 })
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
 })
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-ibm-plex',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -45,7 +64,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${inter.variable} ${ibmPlexSans.variable} bg-background`}
+      className={`${geist.variable} ${geistMono.variable} ${poppins.variable} ${inter.variable} ${ibmPlexSans.variable} bg-background`}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
@@ -55,7 +74,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
           <Toaster />
         </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

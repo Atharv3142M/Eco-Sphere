@@ -1,6 +1,10 @@
 'use client'
 
-import { ChevronsUpDown, UserCog } from 'lucide-react'
+import React, { useState } from 'react'
+import { ChevronsUpDown, UserCog, Loader2 } from 'lucide-react'
+import { useAuth } from '@/lib/auth/context'
+import { UserRole } from '@/types/auth'
+import { canSwitchToRole } from '@/lib/auth/rbac'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,46 +15,82 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useRole } from '@/components/role-provider'
-import { ROLES } from '@/lib/mock-data'
-import type { Role } from '@/lib/types'
+
+const ROLE_LABELS: Record<UserRole, { label: string; description: string }> = {
+  [UserRole.ADMIN]: {
+    label: 'Administrator',
+    description: 'Full platform access and management',
+  },
+  [UserRole.ESG_MANAGER]: {
+    label: 'ESG Manager',
+    description: 'Manage ESG programs and reports',
+  },
+  [UserRole.DEPARTMENT_HEAD]: {
+    label: 'Department Head',
+    description: 'View and manage department data',
+  },
+  [UserRole.EMPLOYEE]: {
+    label: 'Employee',
+    description: 'View dashboards and participate',
+  },
+}
 
 export function RoleSwitcher() {
-  const { role, setRole } = useRole()
-  const active = ROLES.find((r) => r.id === role)
+  const { user, switchRole, isLoading } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
+  const [switching, setSwitching] = useState(false)
+
+  if (!user) return null
+
+  const currentRoleLabel = ROLE_LABELS[user.role]
+  const availableRoles = Object.values(UserRole).filter((role) => canSwitchToRole(user.role, role))
+
+  const handleRoleSwitch = async (newRole: UserRole) => {
+    if (newRole === user.role) return
+
+    setSwitching(true)
+    try {
+      await switchRole(newRole)
+      setIsOpen(false)
+    } finally {
+      setSwitching(false)
+    }
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant="outline" size="sm" className="gap-2">
-            <UserCog data-icon="inline-start" />
-            <span className="hidden sm:inline">{active?.label}</span>
-            <ChevronsUpDown data-icon="inline-end" className="opacity-60" />
-          </Button>
-        }
-      />
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2" disabled={isLoading || switching}>
+          <UserCog className="h-4 w-4" />
+          <span className="hidden sm:inline text-sm">{currentRoleLabel.label}</span>
+          <ChevronsUpDown className="h-4 w-4 opacity-60" />
+        </Button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
-        <DropdownMenuLabel>Preview as role</DropdownMenuLabel>
+        <DropdownMenuLabel>Switch Role</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={role}
-          onValueChange={(value) => setRole(value as Role)}
-        >
-          {ROLES.map((r) => (
-            <DropdownMenuRadioItem
-              key={r.id}
-              value={r.id}
-              className="items-start py-2"
-            >
-              <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">{r.label}</span>
-                <span className="text-xs text-muted-foreground">
-                  {r.description}
-                </span>
-              </div>
-            </DropdownMenuRadioItem>
-          ))}
+        <DropdownMenuRadioGroup value={user.role} onValueChange={(value) => handleRoleSwitch(value as UserRole)}>
+          {availableRoles.map((role) => {
+            const roleInfo = ROLE_LABELS[role]
+            const isSelected = role === user.role
+
+            return (
+              <DropdownMenuRadioItem
+                key={role}
+                value={role}
+                className="items-start py-2 cursor-pointer"
+                disabled={switching}
+              >
+                <div className="flex flex-col gap-0.5 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">{roleInfo.label}</span>
+                    {isSelected && switching && <Loader2 className="h-3 w-3 animate-spin" />}
+                  </div>
+                  <span className="text-xs text-muted-foreground">{roleInfo.description}</span>
+                </div>
+              </DropdownMenuRadioItem>
+            )
+          })}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

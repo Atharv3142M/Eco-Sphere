@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { DynamicButton } from '@/components/ui/dynamic-button'
 import { Gift, Zap, Award, Store } from 'lucide-react'
 
 const rewards = [
@@ -71,6 +72,26 @@ const rarityColors = {
 
 export function Rewards() {
   const userXP = 3500
+  const [loadingRewards, setLoadingRewards] = useState<string[]>([])
+
+  const handleRedeem = async (rewardId: string, cost: number, rewardName: string) => {
+    setLoadingRewards(prev => [...prev, rewardId])
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Log redemption
+      console.log(`Successfully redeemed: ${rewardName} for ${cost} XP`)
+      
+      // In production, would also:
+      // - Deduct XP from user
+      // - Send confirmation email
+      // - Track in analytics
+    } finally {
+      setLoadingRewards(prev => prev.filter(id => id !== rewardId))
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -129,13 +150,26 @@ export function Rewards() {
                     </Badge>
                   </div>
                 </div>
-                <Button
-                  disabled={!canAfford}
-                  className="w-full"
-                  variant={canAfford ? 'default' : 'secondary'}
-                >
-                  {canAfford ? 'Redeem' : 'Not Enough XP'}
-                </Button>
+                {canAfford ? (
+                  <DynamicButton
+                    className="w-full"
+                    isLoading={loadingRewards.includes(reward.id)}
+                    loadingText="Redeeming..."
+                    successText="Redeemed!"
+                    successDuration={2000}
+                    onClick={() => handleRedeem(reward.id, reward.cost, reward.name)}
+                  >
+                    Redeem
+                  </DynamicButton>
+                ) : (
+                  <DynamicButton
+                    className="w-full"
+                    variant="secondary"
+                    disabled
+                  >
+                    Not Enough XP
+                  </DynamicButton>
+                )}
               </CardContent>
             </Card>
           )

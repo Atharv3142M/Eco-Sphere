@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Search } from 'lucide-react'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
-import { RoleSwitcher } from '@/components/role-switcher'
+import { UserMenu } from '@/components/user-menu'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { NotificationsMenu } from '@/components/notifications-menu'
 import { NAV_ITEMS } from '@/lib/nav'
@@ -40,9 +40,9 @@ export function TopBar() {
             className="h-9 w-56 rounded-lg border border-border bg-muted/40 pl-9 pr-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:bg-background"
           />
         </div>
-        <RoleSwitcher />
         <ThemeToggle />
         <NotificationsMenu />
+        <UserMenu />
       </div>
     </header>
   )

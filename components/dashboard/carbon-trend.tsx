@@ -1,5 +1,6 @@
 "use client"
 
+import { useTheme } from "next-themes"
 import {
   Card,
   CardContent,
@@ -21,18 +22,25 @@ import { carbonTrend } from "@/lib/mock-data"
 const chartConfig = {
   actual: {
     label: "Actual Emissions",
-    color: "var(--chart-1)",
+    color: "#10b981",
   },
   target: {
     label: "Target",
-    color: "var(--chart-4)",
+    color: "#3b82f6",
   },
 } satisfies ChartConfig
 
 export function CarbonTrend() {
+  const { theme } = useTheme()
   const first = carbonTrend[0].actual
   const last = carbonTrend[carbonTrend.length - 1].actual
   const change = Math.round(((last - first) / first) * 100)
+
+  // Theme-aware colors
+  const gridColor = theme === 'dark' ? '#374151' : '#e5e7eb'
+  const textColor = theme === 'dark' ? '#9ca3af' : '#6b7280'
+  const actualColor = '#10b981'
+  const targetColor = '#3b82f6'
 
   return (
     <Card>
@@ -53,29 +61,31 @@ export function CarbonTrend() {
           <AreaChart data={carbonTrend} margin={{ left: 4, right: 8, top: 8 }}>
             <defs>
               <linearGradient id="fillActual" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-actual)" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="var(--color-actual)" stopOpacity={0.02} />
+                <stop offset="5%" stopColor={actualColor} stopOpacity={0.35} />
+                <stop offset="95%" stopColor={actualColor} stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <CartesianGrid vertical={false} stroke={gridColor} strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               fontSize={12}
+              stroke={textColor}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
               width={36}
               fontSize={12}
+              stroke={textColor}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Area
               dataKey="target"
               type="monotone"
-              stroke="var(--color-target)"
+              stroke={targetColor}
               strokeDasharray="5 5"
               strokeWidth={2}
               fill="none"
@@ -83,7 +93,7 @@ export function CarbonTrend() {
             <Area
               dataKey="actual"
               type="monotone"
-              stroke="var(--color-actual)"
+              stroke={actualColor}
               strokeWidth={2.5}
               fill="url(#fillActual)"
             />
