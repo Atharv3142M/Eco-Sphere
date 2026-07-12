@@ -17,7 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { TrendingDown } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { carbonTrend } from "@/lib/mock-data"
+import { carbonTrend } from '@/lib/esg-data'
 
 const chartConfig = {
   actual: {

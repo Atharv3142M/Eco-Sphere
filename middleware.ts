@@ -1,25 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const PUBLIC_PATHS = ['/auth/login', '/auth/signup']
+const AUTH_API_PREFIX = '/api/auth/'
+
 export function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get('sessionToken')?.value
   const pathname = request.nextUrl.pathname
 
-  // Check if user is authenticated
-  const isAuthenticated = !!sessionToken || typeof window !== 'undefined' && localStorage.getItem('sessionToken')
+  const isAuthenticated = Boolean(sessionToken)
+  const isPublicRoute =
+    PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
+    pathname.startsWith(AUTH_API_PREFIX)
 
-  // Public routes that don't require authentication
-  const publicRoutes = ['/auth/login', '/auth/signup', '/', '/api/auth/login', '/api/auth/signup']
-
-  // Check if current route is public
-  const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/api/auth/')
-
-  // Redirect to login if accessing protected route without auth
-  if (!isPublicRoute && !isAuthenticated) {
+  if (!isPublicRoute && pathname !== '/' && !isAuthenticated) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  // Redirect to dashboard if accessing auth pages while authenticated
-  if (isPublicRoute && isAuthenticated && pathname.startsWith('/auth')) {
+  if (isAuthenticated && pathname.startsWith('/auth')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
@@ -27,13 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.svg).*)'],
 }

@@ -12,7 +12,10 @@ export interface User {
   role: UserRole
   department?: string
   avatar?: string
-  createdAt: Date
+  level?: number
+  xp?: number
+  streak?: number
+  createdAt: Date | string
 }
 
 export interface AuthContextType {
@@ -23,4 +26,5 @@ export interface AuthContextType {
   signup: (email: string, password: string, name: string, role: UserRole, department?: string) => Promise<void>
   logout: () => Promise<void>
   switchRole: (role: UserRole) => Promise<void>
+  updateProfile: (updates: Partial<User>) => Promise<void>
 }

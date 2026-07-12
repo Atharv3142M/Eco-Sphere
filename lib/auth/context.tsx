@@ -3,25 +3,48 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, UserRole, AuthContextType } from '@/types/auth'
 import { validateCredentials, registerNewAccount } from './mock-accounts'
+import { getUserGamificationStats } from '@/lib/esg-data'
+import {
+  clearSessionCookie,
+  createSessionToken,
+  setSessionCookie,
+} from './session'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+function enrichUser(user: User): User {
+  const stats = getUserGamificationStats(user.id, user.department)
+  return {
+    ...user,
+    level: user.level ?? stats.level,
+    xp: user.xp ?? stats.xp,
+    streak: user.streak ?? stats.streak,
+  }
+}
+
+function persistUser(user: User, token: string) {
+  localStorage.setItem('user', JSON.stringify(user))
+  localStorage.setItem('sessionToken', token)
+  setSessionCookie(token)
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Initialize auth from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     const sessionToken = localStorage.getItem('sessionToken')
-    
+
     if (storedUser && sessionToken) {
       try {
-        setUser(JSON.parse(storedUser))
-      } catch (error) {
-        console.error('Failed to parse stored user:', error)
+        const parsed = JSON.parse(storedUser) as User
+        setUser(enrichUser(parsed))
+        setSessionCookie(sessionToken)
+      } catch {
         localStorage.removeItem('user')
         localStorage.removeItem('sessionToken')
+        clearSessionCookie()
       }
     }
     setIsLoading(false)
@@ -30,32 +53,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      // Validate credentials against mock accounts
       const account = validateCredentials(email, password)
-      
-      if (!account) {
-        throw new Error('Invalid email or password')
-      }
+      if (!account) throw new Error('Invalid email or password')
 
-      const user: User = {
-        id: Math.random().toString(36).substr(2, 9),
+      const nextUser = enrichUser({
+        id: Math.random().toString(36).slice(2, 11),
         email: account.email,
         name: account.name,
         role: account.role,
         department: account.department,
         createdAt: new Date(),
-      }
+      })
 
-      // Store user in localStorage
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('sessionToken', `token_${Date.now()}`)
-      
-      // Update state
-      setUser(user)
-      return true
+      const token = createSessionToken()
+      persistUser(nextUser, token)
+      setUser(nextUser)
     } catch (error) {
       localStorage.removeItem('user')
       localStorage.removeItem('sessionToken')
+      clearSessionCookie()
       setUser(null)
       throw error
     } finally {
@@ -63,10 +79,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signup = async (email: string, password: string, name: string, role: UserRole, department: string = 'Operations') => {
+  const signup = async (
+    email: string,
+    password: string,
+    name: string,
+    role: UserRole,
+    department: string = 'Operations',
+  ) => {
     setIsLoading(true)
     try {
-      // Register new account
       const registered = registerNewAccount({
         email,
         password,
@@ -74,30 +95,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role,
         department,
       })
+      if (!registered) throw new Error('Email already registered')
 
-      if (!registered) {
-        throw new Error('Email already registered')
-      }
-
-      const newUser: User = {
-        id: Math.random().toString(36).substr(2, 9),
+      const nextUser = enrichUser({
+        id: Math.random().toString(36).slice(2, 11),
         email,
         name,
         role,
         department,
         createdAt: new Date(),
-      }
+      })
 
-      // Store user in localStorage
-      localStorage.setItem('user', JSON.stringify(newUser))
-      localStorage.setItem('sessionToken', `token_${Date.now()}`)
-      
-      // Update state
-      setUser(newUser)
-      return true
+      const token = createSessionToken()
+      persistUser(nextUser, token)
+      setUser(nextUser)
     } catch (error) {
       localStorage.removeItem('user')
       localStorage.removeItem('sessionToken')
+      clearSessionCookie()
       setUser(null)
       throw error
     } finally {
@@ -108,10 +123,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 300))
       localStorage.removeItem('user')
       localStorage.removeItem('sessionToken')
+      clearSessionCookie()
       setUser(null)
     } finally {
       setIsLoading(false)
@@ -120,21 +135,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const switchRole = async (newRole: UserRole) => {
     if (!user) return
-    
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      const updatedUser: User = {
-        ...user,
-        role: newRole,
-      }
-      localStorage.setItem('user', JSON.stringify(updatedUser))
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      const updatedUser = enrichUser({ ...user, role: newRole })
+      const token = localStorage.getItem('sessionToken') ?? createSessionToken()
+      persistUser(updatedUser, token)
       setUser(updatedUser)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const updateProfile = async (updates: Partial<User>) => {
+    if (!user) return
+    const updatedUser = enrichUser({ ...user, ...updates })
+    const token = localStorage.getItem('sessionToken') ?? createSessionToken()
+    persistUser(updatedUser, token)
+    setUser(updatedUser)
   }
 
   return (
@@ -147,6 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signup,
         logout,
         switchRole,
+        updateProfile,
       }}
     >
       {children}

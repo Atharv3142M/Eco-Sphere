@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { ArrowDown, ArrowUp, Minus } from "lucide-react"
-import { departmentRankings } from "@/lib/mock-data"
+import { getDepartmentRankings } from '@/lib/esg-data'
 
 const rankStyles = [
   "bg-[oklch(0.85_0.15_90)] text-[oklch(0.35_0.1_90)]",
@@ -21,6 +21,8 @@ const rankStyles = [
 ]
 
 export function DepartmentRankings() {
+  const departmentRankings = getDepartmentRankings()
+
   return (
     <Card>
       <CardHeader>

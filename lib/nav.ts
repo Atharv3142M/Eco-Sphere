@@ -4,10 +4,10 @@ import {
   Leaf,
   Users,
   Scale,
-  Trophy,
-  Gift,
   FileBarChart,
   Settings,
+  Gamepad2,
+  Bell,
 } from 'lucide-react'
 import type { Role } from './types'
 
@@ -21,14 +21,13 @@ export interface NavItem {
   href: string
   icon: LucideIcon
   children?: NavChild[]
-  /** roles that can see this item; omit for all roles */
   roles?: Role[]
 }
 
 export const NAV_ITEMS: NavItem[] = [
   {
     label: 'Dashboard',
-    href: '/',
+    href: '/dashboard',
     icon: LayoutDashboard,
   },
   {
@@ -64,25 +63,29 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    label: 'Challenges',
-    href: '/challenges',
-    icon: Trophy,
+    label: 'Gamification',
+    href: '/gamification',
+    icon: Gamepad2,
     children: [
-      { label: 'Active', href: '/challenges/active' },
-      { label: 'Completed', href: '/challenges/completed' },
-      { label: 'My Challenges', href: '/challenges/mine' },
+      { label: 'Overview', href: '/gamification' },
+      { label: 'ESG Leagues', href: '/gamification/leagues' },
+      { label: 'Weekly Missions', href: '/gamification/missions' },
+      { label: 'Streaks & Achievements', href: '/gamification/streaks' },
+      { label: 'Champion & Events', href: '/gamification/champion' },
+      { label: 'Challenges', href: '/challenges' },
+      { label: 'Rewards', href: '/rewards' },
     ],
-  },
-  {
-    label: 'Rewards',
-    href: '/rewards',
-    icon: Gift,
   },
   {
     label: 'Reports',
     href: '/reports',
     icon: FileBarChart,
     roles: ['manager', 'officer', 'admin'],
+  },
+  {
+    label: 'Alerts',
+    href: '/governance/compliance',
+    icon: Bell,
   },
   {
     label: 'Settings',

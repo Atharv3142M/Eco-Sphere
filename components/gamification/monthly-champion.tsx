@@ -1,20 +1,22 @@
 'use client'
 
+import { useAuth } from '@/lib/auth/context'
+import { getUserGamificationStats } from '@/lib/esg-data'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Calendar, Crown, Users, Target, MapPin, Clock, Flame } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const currentChampion = {
-  name: 'Sarah Chen',
+const currentChampionFallback = {
+  name: 'Daniel Rajput',
   role: 'ESG Manager',
   department: 'Sustainability',
   points: 4850,
   achievements: 8,
   streak: 47,
   initiatives: 5,
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
+  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=champion',
   badges: ['Carbon Crusader', 'Team Player', 'Net Zero Champion'],
   quote: 'Every small action counts towards our sustainability goals!',
 }
@@ -111,6 +113,20 @@ const eventColors = {
 }
 
 export function MonthlySustainabilityChampion() {
+  const { user } = useAuth()
+  const stats = getUserGamificationStats(user?.id, user?.department)
+  const currentChampion = user
+    ? {
+        ...currentChampionFallback,
+        name: user.name,
+        role: user.role.replace('_', ' '),
+        department: user.department ?? 'Operations',
+        points: user.xp ?? stats.xp,
+        streak: user.streak ?? stats.streak,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`,
+      }
+    : currentChampionFallback
+
   return (
     <Tabs defaultValue="champion" className="space-y-6">
       <TabsList className="grid w-full grid-cols-2">

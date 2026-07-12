@@ -25,7 +25,6 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* ESG module + status accents */
   --color-env: var(--env);
   --color-env-foreground: var(--env-foreground);
   --color-social: var(--social);
@@ -70,30 +69,31 @@
 
 :root {
   color-scheme: light;
-  --radius: 1.125rem; /* 18px */
 
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --radius: 0.875rem;
+
+  --background: #f4f4f5;
+  --foreground: #0a0a0a;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #0a0a0a;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #0a0a0a;
 
-  --primary: #10b981;
+  --primary: #65a30d;
   --primary-foreground: #ffffff;
-  --secondary: #f0fdf4;
-  --secondary-foreground: #1f2937;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #d1fae5;
-  --accent-foreground: #065f46;
+  --secondary: #ecfccb;
+  --secondary-foreground: #365314;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #ecfccb;
+  --accent-foreground: #365314;
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --border: #e5e7eb;
-  --input: #f3f4f6;
-  --ring: #10b981;
+  --border: #e4e4e7;
+  --input: #f4f4f5;
+  --ring: #84cc16;
 
   --env: #16a34a;
   --env-foreground: #ffffff;
@@ -111,57 +111,57 @@
   --info: #3b82f6;
   --info-foreground: #ffffff;
 
-  --chart-1: #1fa971;
+  --chart-1: #84cc16;
   --chart-2: #2563eb;
   --chart-3: #7c3aed;
   --chart-4: #f59e0b;
-  --chart-5: #64748b;
+  --chart-5: #71717a;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #1f2937;
-  --sidebar-primary: #10b981;
+  --sidebar-foreground: #18181b;
+  --sidebar-primary: #65a30d;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #d1fae5;
-  --sidebar-accent-foreground: #065f46;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #10b981;
+  --sidebar-accent: #ecfccb;
+  --sidebar-accent-foreground: #365314;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #84cc16;
 }
 
 .dark {
   color-scheme: dark;
 
-  --background: #0a0e27;
-  --foreground: #f3f4f6;
-  --card: #111827;
-  --card-foreground: #f3f4f6;
-  --popover: #111827;
-  --popover-foreground: #f3f4f6;
+  --background: #0b0b0b;
+  --foreground: #fafafa;
+  --card: #181818;
+  --card-foreground: #fafafa;
+  --popover: #181818;
+  --popover-foreground: #fafafa;
 
-  --primary: #34d399;
-  --primary-foreground: #064e3b;
-  --secondary: #1f2937;
-  --secondary-foreground: #f3f4f6;
-  --muted: #1a2434;
-  --muted-foreground: #94a3b8;
-  --accent: #064e3b;
-  --accent-foreground: #6ee7b7;
+  --primary: #84cc16;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #fafafa;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1aa;
+  --accent: #1a2e05;
+  --accent-foreground: #bef264;
 
   --destructive: #f87171;
   --destructive-foreground: #1a0606;
 
-  --border: #374151;
-  --input: #1f2937;
-  --ring: #34d399;
+  --border: #2a2a2a;
+  --input: #1f1f1f;
+  --ring: #84cc16;
 
-  --env: #22c55e;
-  --env-foreground: #04150d;
-  --social: #3b82f6;
+  --env: #4ade80;
+  --env-foreground: #052e16;
+  --social: #60a5fa;
   --social-foreground: #04101f;
   --gov: #a78bfa;
   --gov-foreground: #14082b;
 
-  --success: #22c55e;
-  --success-foreground: #04150d;
+  --success: #4ade80;
+  --success-foreground: #052e16;
   --warning: #fbbf24;
   --warning-foreground: #1c1403;
   --danger: #f87171;
@@ -169,20 +169,20 @@
   --info: #60a5fa;
   --info-foreground: #04101f;
 
-  --chart-1: #2fbd83;
+  --chart-1: #84cc16;
   --chart-2: #60a5fa;
   --chart-3: #a78bfa;
   --chart-4: #fbbf24;
-  --chart-5: #94a3b8;
+  --chart-5: #a1a1aa;
 
-  --sidebar: #111827;
-  --sidebar-foreground: #f3f4f6;
-  --sidebar-primary: #34d399;
-  --sidebar-primary-foreground: #064e3b;
-  --sidebar-accent: #064e3b;
-  --sidebar-accent-foreground: #6ee7b7;
-  --sidebar-border: #374151;
-  --sidebar-ring: #34d399;
+  --sidebar: #0f0f0f;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #84cc16;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #1a2e05;
+  --sidebar-accent-foreground: #bef264;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #84cc16;
 }
 
 @layer base {
@@ -192,11 +192,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5 {
+  h1, h2, h3, h4, h5 {
     font-family: var(--font-heading);
   }
 }

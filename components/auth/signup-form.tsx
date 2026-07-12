@@ -18,17 +18,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-
-const DEPARTMENTS = [
-  'Operations',
-  'Finance',
-  'HR',
-  'Marketing',
-  'IT',
-  'Sales',
-  'Legal',
-  'Sustainability',
-]
+import { DEPARTMENTS } from '@/lib/esg-data'
 
 export function SignupForm() {
   const router = useRouter()
@@ -44,32 +34,25 @@ export function SignupForm() {
   const [error, setError] = useState('')
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }))
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    // Validation
     if (!formData.email || !formData.password || !formData.name) {
       setError('Please fill in all fields')
       return
     }
-
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters')
       return
     }
-
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
       return
     }
-
     if (!formData.email.includes('@')) {
       setError('Please enter a valid email address')
       return
@@ -81,7 +64,7 @@ export function SignupForm() {
         formData.password,
         formData.name,
         formData.role,
-        formData.department
+        formData.department,
       )
       router.replace('/dashboard')
     } catch (err) {
@@ -90,12 +73,10 @@ export function SignupForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md border-border/60 shadow-xl">
       <CardHeader className="space-y-2">
-        <CardTitle>Join EcoSphere</CardTitle>
-        <CardDescription>
-          Create an account to start managing ESG performance
-        </CardDescription>
+        <CardTitle className="font-heading text-2xl">Join EcoSphere</CardTitle>
+        <CardDescription>Create an account to start managing ESG performance</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,7 +91,7 @@ export function SignupForm() {
             <Label htmlFor="name">Full Name</Label>
             <Input
               id="name"
-              placeholder="John Doe"
+              placeholder="Daniel Rajput"
               value={formData.name}
               onChange={(e) => handleChange('name', e.target.value)}
               disabled={isLoading}
@@ -157,13 +138,11 @@ export function SignupForm() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select value={formData.role} onValueChange={(value) => handleChange('role', value)}>
-                <SelectTrigger id="role">
-                  <SelectValue />
-                </SelectTrigger>
+              <Select value={formData.role} onValueChange={(v) => handleChange('role', v)}>
+                <SelectTrigger id="role"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={UserRole.EMPLOYEE}>Employee</SelectItem>
                   <SelectItem value={UserRole.DEPARTMENT_HEAD}>Department Head</SelectItem>
@@ -172,15 +151,12 @@ export function SignupForm() {
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="department">Department</Label>
-              <Select value={formData.department} onValueChange={(value) => handleChange('department', value)}>
-                <SelectTrigger id="department">
-                  <SelectValue />
-                </SelectTrigger>
+              <Select value={formData.department} onValueChange={(v) => handleChange('department', v)}>
+                <SelectTrigger id="department"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {DEPARTMENTS.map(dept => (
+                  {DEPARTMENTS.map((dept) => (
                     <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                   ))}
                 </SelectContent>
@@ -188,11 +164,7 @@ export function SignupForm() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Creating account...' : 'Create account'}
           </Button>
@@ -200,10 +172,7 @@ export function SignupForm() {
           <div className="text-center text-sm">
             <p className="text-muted-foreground">
               Already have an account?{' '}
-              <Link
-                href="/auth/login"
-                className="text-primary hover:underline font-medium"
-              >
+              <Link href="/auth/login" className="font-medium text-primary hover:underline">
                 Sign in
               </Link>
             </p>

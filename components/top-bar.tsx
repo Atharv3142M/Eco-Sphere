@@ -11,14 +11,15 @@ import { NAV_ITEMS } from '@/lib/nav'
 
 function usePageTitle() {
   const pathname = usePathname()
-  if (pathname === '/') return 'Dashboard'
+  if (pathname === '/dashboard' || pathname === '/') return 'Dashboard'
   for (const item of NAV_ITEMS) {
     if (item.children) {
       const child = item.children.find((c) => pathname.startsWith(c.href))
       if (child) return `${item.label} · ${child.label}`
     }
-    if (pathname.startsWith(item.href) && item.href !== '/') return item.label
+    if (pathname.startsWith(item.href) && item.href !== '/dashboard') return item.label
   }
+  if (pathname.startsWith('/profile')) return 'Profile'
   return 'Dashboard'
 }
 
@@ -31,13 +32,13 @@ export function TopBar() {
       <Separator orientation="vertical" className="mr-1 !h-5" />
       <h1 className="font-heading text-base font-semibold">{title}</h1>
 
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex items-center gap-2">
         <div className="relative hidden md:block">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="search"
             placeholder="Search..."
-            className="h-9 w-56 rounded-lg border border-border bg-muted/40 pl-9 pr-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:bg-background"
+            className="h-9 w-48 rounded-lg border border-border bg-muted/40 pl-9 pr-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:bg-background lg:w-56"
           />
         </div>
         <ThemeToggle />

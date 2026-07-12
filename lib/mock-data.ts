@@ -1,22 +1,9 @@
 import type {
   AppNotification,
-  CarbonTrendPoint,
-  DepartmentRank,
   EsgScore,
   Insight,
   RoleDef,
 } from './types'
-
-export const CURRENT_USER = {
-  name: 'Sarah Chen',
-  firstName: 'Sarah',
-  initials: 'SC',
-  title: 'Sustainability Lead',
-  department: 'Finance',
-  level: 16,
-  xp: 12480,
-  streak: 19,
-}
 
 export const ROLES: RoleDef[] = [
   {
@@ -42,11 +29,11 @@ export const ROLES: RoleDef[] = [
 ]
 
 export const ESG_SCORE: EsgScore = {
-  overall: 87.4,
-  environmental: 82,
+  overall: 91,
+  environmental: 86,
   social: 91,
   governance: 89,
-  deltaMonth: 4.2,
+  deltaMonth: 12,
   environmentalDelta: 6,
   socialDelta: 2,
   governanceDelta: 1,
@@ -92,63 +79,6 @@ export const INSIGHTS: Insight[] = [
     detail: 'Quarter-over-quarter reduction across fleet',
     module: 'environmental',
     time: 'Yesterday',
-  },
-]
-
-export const carbonTrend: Array<{ month: string; actual: number; target: number }> = [
-  { month: 'Jan', actual: 620, target: 600 },
-  { month: 'Feb', actual: 540, target: 580 },
-  { month: 'Mar', actual: 470, target: 560 },
-  { month: 'Apr', actual: 430, target: 540 },
-  { month: 'May', actual: 390, target: 520 },
-  { month: 'Jun', actual: 355, target: 500 },
-]
-
-export const departmentRankings: DepartmentRank[] = [
-  {
-    rank: 1,
-    name: 'Finance',
-    score: 94,
-    environmental: 90,
-    social: 96,
-    governance: 96,
-    trend: 3,
-  },
-  {
-    rank: 2,
-    name: 'HR',
-    score: 91,
-    environmental: 85,
-    social: 98,
-    governance: 90,
-    trend: 2,
-  },
-  {
-    rank: 3,
-    name: 'Marketing',
-    score: 88,
-    environmental: 84,
-    social: 92,
-    governance: 88,
-    trend: 1,
-  },
-  {
-    rank: 4,
-    name: 'IT',
-    score: 84,
-    environmental: 82,
-    social: 85,
-    governance: 85,
-    trend: -1,
-  },
-  {
-    rank: 5,
-    name: 'Operations',
-    score: 79,
-    environmental: 72,
-    social: 84,
-    governance: 81,
-    trend: -2,
   },
 ]
 
