@@ -29,12 +29,9 @@ export function LoginForm() {
 
     try {
       await login(email, password)
-      // Redirect after login is complete
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 500)
+      router.replace('/dashboard')
     } catch (err) {
-      setError('Invalid email or password')
+      setError(err instanceof Error ? err.message : 'Invalid email or password')
     }
   }
 
@@ -90,16 +87,28 @@ export function LoginForm() {
             {isLoading ? 'Signing in...' : 'Sign in'}
           </Button>
 
-          <div className="space-y-2 text-center text-sm">
-            <p className="text-muted-foreground">
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/auth/signup"
-                className="text-primary hover:underline font-medium"
-              >
-                Sign up
-              </Link>
-            </p>
+          <div className="space-y-3 pt-2">
+            <div className="text-center text-sm">
+              <p className="text-muted-foreground">
+                Don&apos;t have an account?{' '}
+                <Link
+                  href="/auth/signup"
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign up
+                </Link>
+              </p>
+            </div>
+
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-left">
+              <p className="text-xs font-semibold text-primary mb-2">Demo Accounts:</p>
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <p>📧 admin@ecosphere.com / admin123</p>
+                <p>📧 manager@ecosphere.com / manager123</p>
+                <p>📧 head@ecosphere.com / head123</p>
+                <p>📧 employee@ecosphere.com / employee123</p>
+              </div>
+            </div>
           </div>
         </form>
       </CardContent>

@@ -70,6 +70,11 @@ export function SignupForm() {
       return
     }
 
+    if (!formData.email.includes('@')) {
+      setError('Please enter a valid email address')
+      return
+    }
+
     try {
       await signup(
         formData.email,
@@ -78,12 +83,9 @@ export function SignupForm() {
         formData.role,
         formData.department
       )
-      // Redirect after signup is complete
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 500)
+      router.replace('/dashboard')
     } catch (err) {
-      setError('Failed to create account')
+      setError(err instanceof Error ? err.message : 'Failed to create account')
     }
   }
 

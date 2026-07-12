@@ -9,12 +9,12 @@ export default function RootPage() {
   const { user, isLoading } = useAuth()
 
   useEffect(() => {
-    if (!isLoading) {
-      if (user) {
-        router.push('/dashboard')
-      } else {
-        router.push('/auth/login')
-      }
+    if (isLoading) return
+
+    if (user) {
+      router.replace('/dashboard')
+    } else {
+      router.replace('/auth/login')
     }
   }, [user, isLoading, router])
 
