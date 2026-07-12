@@ -227,4 +227,4 @@ This project was developed as part of a hackathon submission and is intended for
 
 ## Team
 
-Developed as a collaborative hackathon project, EcoSphere aims to deliver an intuitive, scalable, and enterprise-ready ESG management platform that helps organizations achieve measurable sustainability outcomes.
+Developed as a collaborative hackathon project, EcoSphere aims to deliver an intuitive, scalable, and enterprise-ready ESG management platform that helps organizations achieve measurable sustainability outcomes
