@@ -36,6 +36,7 @@ const PRIORITY_STYLES: Record<AppNotification['priority'], string> = {
 }
 
 export function NotificationsMenu() {
+  const [open, setOpen] = React.useState(false)
   const [items, setItems] = React.useState<AppNotification[]>(NOTIFICATIONS)
   const unread = items.filter((n) => !n.read).length
 
@@ -44,40 +45,25 @@ export function NotificationsMenu() {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}
-            className="relative"
-          >
-            <Bell />
-            {unread > 0 && (
-              <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-semibold text-danger-foreground">
-                {unread}
-              </span>
-            )}
-          </Button>
-        }
-      />
-      <DropdownMenuContent align="end" className="w-[22rem] p-0">
+        aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}
+        className="relative size-9 rounded-lg p-0 hover:bg-muted/50"
+      >
+        <Bell className="mx-auto size-4" />
+        {unread > 0 && (
+          <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-semibold text-danger-foreground">
+            {unread}
+          </span>
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[22rem] p-0" sideOffset={8}>
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex flex-col">
-            <span className="font-heading text-sm font-semibold">
-              Notifications
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {unread} unread
-            </span>
+            <span className="font-heading text-sm font-semibold">Notifications</span>
+            <span className="text-xs text-muted-foreground">{unread} unread</span>
           </div>
-          <Button
-            variant="ghost"
-            size="xs"
-            onClick={markAllRead}
-            disabled={unread === 0}
-          >
+          <Button variant="ghost" size="xs" onClick={markAllRead} disabled={unread === 0}>
             Mark all read
           </Button>
         </div>
@@ -103,19 +89,11 @@ export function NotificationsMenu() {
                   </span>
                   <div className="flex min-w-0 flex-col gap-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">
-                        {n.title}
-                      </span>
-                      {!n.read && (
-                        <span className="size-2 shrink-0 rounded-full bg-primary" />
-                      )}
+                      <span className="truncate text-sm font-medium">{n.title}</span>
+                      {!n.read && <span className="size-2 shrink-0 rounded-full bg-primary" />}
                     </div>
-                    <span className="text-xs leading-relaxed text-muted-foreground">
-                      {n.detail}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground/80">
-                      {n.time}
-                    </span>
+                    <span className="text-xs leading-relaxed text-muted-foreground">{n.detail}</span>
+                    <span className="text-[11px] text-muted-foreground/80">{n.time}</span>
                   </div>
                 </li>
               )

@@ -8,6 +8,7 @@ import {
   Settings,
   Gamepad2,
   Bell,
+  ListChecks,
 } from 'lucide-react'
 import type { Role } from './types'
 
@@ -75,6 +76,11 @@ export const NAV_ITEMS: NavItem[] = [
       { label: 'Challenges', href: '/challenges' },
       { label: 'Rewards', href: '/rewards' },
     ],
+  },
+  {
+    label: 'Features',
+    href: '/features',
+    icon: ListChecks,
   },
   {
     label: 'Reports',

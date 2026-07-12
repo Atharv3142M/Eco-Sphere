@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/context'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,12 +28,14 @@ const ROLE_LABELS: Record<UserRole, string> = {
 export function UserMenu() {
   const router = useRouter()
   const { user, logout, isLoading } = useAuth()
+  const [open, setOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   if (!user) return null
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
+    setOpen(false)
     try {
       await logout()
       window.location.href = '/auth/login'
@@ -43,25 +44,35 @@ export function UserMenu() {
     }
   }
 
-  const initials = user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+  const initials = user.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
   const deptStats = getDepartmentStats(user.department)
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
-        render={
-          <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
-            <Avatar className="h-9 w-9 ring-2 ring-primary/30">
-              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} alt={user.name} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">{initials}</AvatarFallback>
-            </Avatar>
-          </Button>
-        }
-      />
-      <DropdownMenuContent align="end" className="w-72">
+        aria-label="Open user menu"
+        className="relative size-9 rounded-full p-0 hover:bg-muted/50"
+      >
+        <Avatar className="size-9 ring-2 ring-primary/30">
+          <AvatarImage
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`}
+            alt={user.name}
+          />
+          <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-72" sideOffset={8}>
         <DropdownMenuLabel>
-          <div className="flex items-start gap-3">
-            <Avatar className="h-10 w-10">
+          <div className="flex items-start gap-3 py-1">
+            <Avatar className="size-10">
               <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} />
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
@@ -69,8 +80,12 @@ export function UserMenu() {
               <p className="truncate text-sm font-semibold">{user.name}</p>
               <p className="truncate text-xs text-muted-foreground">{user.email}</p>
               <div className="flex flex-wrap gap-1 pt-0.5">
-                <Badge variant="secondary" className="text-[10px]">{ROLE_LABELS[user.role]}</Badge>
-                <Badge variant="outline" className="text-[10px]">{user.department ?? 'Unassigned'}</Badge>
+                <Badge variant="secondary" className="text-[10px]">
+                  {ROLE_LABELS[user.role]}
+                </Badge>
+                <Badge variant="outline" className="text-[10px]">
+                  {user.department ?? 'Unassigned'}
+                </Badge>
               </div>
             </div>
           </div>
@@ -78,7 +93,9 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <div className="grid grid-cols-3 gap-2 px-2 py-1.5">
           <div className="rounded-lg bg-muted/50 p-2 text-center">
-            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><Zap className="size-3" /> Level</div>
+            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+              <Zap className="size-3" /> Level
+            </div>
             <div className="font-numeric text-sm font-bold">{user.level ?? 1}</div>
           </div>
           <div className="rounded-lg bg-muted/50 p-2 text-center">
@@ -86,7 +103,9 @@ export function UserMenu() {
             <div className="font-numeric text-sm font-bold">{(user.xp ?? 0).toLocaleString()}</div>
           </div>
           <div className="rounded-lg bg-muted/50 p-2 text-center">
-            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><Flame className="size-3 text-warning" /> Streak</div>
+            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+              <Flame className="size-3 text-warning" /> Streak
+            </div>
             <div className="font-numeric text-sm font-bold">{user.streak ?? 0}d</div>
           </div>
         </div>
@@ -97,13 +116,37 @@ export function UserMenu() {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/profile')}><User className="mr-2 h-4 w-4" /><span>Profile</span></DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings')}><Settings className="mr-2 h-4 w-4" /><span>Settings</span></DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setOpen(false)
+              router.push('/profile')
+            }}
+          >
+            <User className="mr-2 size-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setOpen(false)
+              router.push('/settings')
+            }}
+          >
+            <Settings className="mr-2 size-4" />
+            Settings
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut || isLoading} className="text-destructive focus:text-destructive">
-          {isLoggingOut ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
-          <span>Logout</span>
+        <DropdownMenuItem
+          variant="destructive"
+          disabled={isLoggingOut || isLoading}
+          onClick={() => void handleLogout()}
+        >
+          {isLoggingOut ? (
+            <Loader2 className="mr-2 size-4 animate-spin" />
+          ) : (
+            <LogOut className="mr-2 size-4" />
+          )}
+          Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

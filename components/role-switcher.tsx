@@ -5,7 +5,6 @@ import { ChevronsUpDown, UserCog, Loader2 } from 'lucide-react'
 import { useAuth } from '@/lib/auth/context'
 import { UserRole } from '@/types/auth'
 import { canSwitchToRole } from '@/lib/auth/rbac'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,12 +58,13 @@ export function RoleSwitcher() {
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2" disabled={isLoading || switching}>
-          <UserCog className="h-4 w-4" />
-          <span className="hidden sm:inline text-sm">{currentRoleLabel.label}</span>
-          <ChevronsUpDown className="h-4 w-4 opacity-60" />
-        </Button>
+      <DropdownMenuTrigger
+        className="inline-flex h-7 items-center gap-2 rounded-lg border border-border bg-background px-2.5 text-sm hover:bg-muted disabled:opacity-50"
+        disabled={isLoading || switching}
+      >
+        <UserCog className="size-4" />
+        <span className="hidden text-sm sm:inline">{currentRoleLabel.label}</span>
+        <ChevronsUpDown className="size-4 opacity-60" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
         <DropdownMenuLabel>Switch Role</DropdownMenuLabel>
