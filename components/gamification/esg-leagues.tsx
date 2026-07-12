@@ -74,10 +74,10 @@ const divisionColors = {
   Silver: 'from-gray-400 to-gray-300',
 }
 
-const divisionBgColors = {
-  Platinum: 'bg-blue-50 border-blue-200',
-  Gold: 'bg-yellow-50 border-yellow-200',
-  Silver: 'bg-gray-50 border-gray-200',
+const divisionBgColors: Record<string, string> = {
+  Platinum: 'bg-info/10 border-info/30',
+  Gold: 'bg-warning/10 border-warning/30',
+  Silver: 'bg-muted border-border',
 }
 
 export function ESGLeagues() {

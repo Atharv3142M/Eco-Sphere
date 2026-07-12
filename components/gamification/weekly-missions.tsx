@@ -95,10 +95,10 @@ const teamQuests = [
   },
 ]
 
-const difficultyColors = {
-  Easy: 'bg-green-100 text-green-900',
-  Medium: 'bg-yellow-100 text-yellow-900',
-  Hard: 'bg-red-100 text-red-900',
+const difficultyColors: Record<string, string> = {
+  Easy: 'bg-env/15 text-env border border-env/30',
+  Medium: 'bg-warning/15 text-warning border border-warning/30',
+  Hard: 'bg-danger/15 text-danger border border-danger/30',
 }
 
 export function WeeklyMissions() {

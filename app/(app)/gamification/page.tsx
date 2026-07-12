@@ -53,7 +53,7 @@ export default function GamificationPage() {
   return (
     <main className="flex flex-col gap-6 p-4 md:p-6">
       <div>
-        <h1 className="font-heading text-3xl font-bold">Gamification Hub</h1>
+        <h1 className="font-heading text-3xl font-bold">Game On Hub</h1>
         <p className="mt-2 text-muted-foreground">
           Engage your team with leagues, missions, streaks, and rewards
         </p>

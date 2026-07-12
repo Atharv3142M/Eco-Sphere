@@ -63,7 +63,7 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    label: 'Gamification',
+    label: 'Game On',
     href: '/gamification',
     icon: Gamepad2,
     children: [

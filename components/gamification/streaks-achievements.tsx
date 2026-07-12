@@ -43,7 +43,7 @@ const achievements = [
     description: 'Complete your first ESG action',
     icon: '🌱',
     unlocked: true,
-    unlockedDate: '2024-06-01',
+    unlockedDate: '2026-06-01',
     rarity: 'Common',
   },
   {
@@ -52,7 +52,7 @@ const achievements = [
     description: 'Reduce carbon emissions by 25%',
     icon: '🔋',
     unlocked: true,
-    unlockedDate: '2024-06-15',
+    unlockedDate: '2026-06-15',
     rarity: 'Rare',
   },
   {
@@ -61,7 +61,7 @@ const achievements = [
     description: 'Complete 10 team quests',
     icon: '👥',
     unlocked: true,
-    unlockedDate: '2024-07-01',
+    unlockedDate: '2026-07-01',
     rarity: 'Rare',
   },
   {
@@ -114,20 +114,20 @@ const achievements = [
   },
 ]
 
-const rarityColors = {
-  Common: 'bg-gray-100 text-gray-900',
-  Rare: 'bg-blue-100 text-blue-900',
-  Epic: 'bg-purple-100 text-purple-900',
-  Legendary: 'bg-yellow-100 text-yellow-900',
-  Secret: 'bg-indigo-100 text-indigo-900',
+const rarityColors: Record<string, string> = {
+  Common: 'bg-muted text-foreground border border-border',
+  Rare: 'bg-info/15 text-info border border-info/30',
+  Epic: 'bg-gov/15 text-gov border border-gov/30',
+  Legendary: 'bg-warning/15 text-warning border border-warning/30',
+  Secret: 'bg-primary/15 text-primary border border-primary/30',
 }
 
-const rarityBorders = {
-  Common: 'border-gray-300',
-  Rare: 'border-blue-300',
-  Epic: 'border-purple-300',
-  Legendary: 'border-yellow-300',
-  Secret: 'border-indigo-300',
+const rarityBorders: Record<string, string> = {
+  Common: 'border-border',
+  Rare: 'border-info/40',
+  Epic: 'border-gov/40',
+  Legendary: 'border-warning/40',
+  Secret: 'border-primary/40',
 }
 
 export function StreaksAchievements() {

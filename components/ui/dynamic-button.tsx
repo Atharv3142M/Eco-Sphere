@@ -10,12 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         success: 'bg-success text-success-foreground hover:bg-success/90',
@@ -27,11 +24,8 @@ const buttonVariants = cva(
         icon: 'h-10 w-10',
       },
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
+    defaultVariants: { variant: 'default', size: 'default' },
+  },
 )
 
 export interface DynamicButtonProps
@@ -70,16 +64,15 @@ const DynamicButton = React.forwardRef<HTMLButtonElement, DynamicButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : 'button'
     const [state, setState] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
     React.useEffect(() => {
-      if (isLoading) {
-        setState('loading')
-      }
-    }, [isLoading])
+      if (isLoading) setState('loading')
+      else if (state === 'loading') setState('success')
+    }, [isLoading, state])
 
     React.useEffect(() => {
       if (state === 'success') {
@@ -101,58 +94,61 @@ const DynamicButton = React.forwardRef<HTMLButtonElement, DynamicButtonProps>(
       }
     }, [state, onError])
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      onClick?.(e)
+    const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled || state === 'loading' || state === 'success') return
+
+      const result = onClick?.(e)
+      if (result && typeof (result as Promise<void>).then === 'function') {
+        setState('loading')
+        try {
+          await result
+          setState('success')
+        } catch {
+          setState('error')
+        }
+      }
     }
 
     const isDisabled = disabled || isLoading || state === 'loading' || state === 'success'
 
-    const getButtonContent = () => {
-      switch (state) {
-        case 'loading':
-          return (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {loadingText}
-            </>
-          )
-        case 'success':
-          return (
-            <>
-              {showSuccessIcon && <Check className="mr-2 h-4 w-4" />}
-              {successText}
-            </>
-          )
-        case 'error':
-          return (
-            <>
-              {showErrorIcon && <X className="mr-2 h-4 w-4" />}
-              {errorText || 'Error'}
-            </>
-          )
-        default:
-          return children
-      }
-    }
-
-    const getVariantForState = () => {
-      if (state === 'success') return 'success'
-      if (state === 'error') return 'destructive'
-      return variant
-    }
+    const content =
+      state === 'loading' || isLoading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          {loadingText}
+        </>
+      ) : state === 'success' ? (
+        <>
+          {showSuccessIcon && <Check className="mr-2 h-4 w-4" />}
+          {successText}
+        </>
+      ) : state === 'error' ? (
+        <>
+          {showErrorIcon && <X className="mr-2 h-4 w-4" />}
+          {errorText || 'Error'}
+        </>
+      ) : (
+        children
+      )
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant: getVariantForState(), size, className }))}
+        className={cn(
+          buttonVariants({
+            variant: state === 'success' ? 'success' : state === 'error' ? 'destructive' : variant,
+            size,
+            className,
+          }),
+        )}
         disabled={isDisabled}
         onClick={handleClick}
         ref={ref}
         {...props}
       >
-        {getButtonContent()}
+        {content}
       </Comp>
     )
-  }
+  },
 )
 
 DynamicButton.displayName = 'DynamicButton'

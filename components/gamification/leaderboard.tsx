@@ -4,216 +4,106 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Medal, TrendingUp } from 'lucide-react'
+import { useAuth } from '@/lib/auth/context'
 
-const leaderboardData = [
-  {
-    rank: 1,
-    name: 'Sarah Chen',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
-    xp: 8750,
-    level: 15,
-    badges: 12,
-    trend: 'up',
-    change: 2,
-  },
-  {
-    rank: 2,
-    name: 'Mike Rodriguez',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mike',
-    xp: 8420,
-    level: 14,
-    badges: 11,
-    trend: 'down',
-    change: 1,
-  },
-  {
-    rank: 3,
-    name: 'Emma Wilson',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=emma',
-    xp: 7890,
-    level: 13,
-    badges: 10,
-    trend: 'up',
-    change: 3,
-  },
-  {
-    rank: 4,
-    name: 'Alex Johnson',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alex',
-    xp: 7340,
-    level: 12,
-    badges: 9,
-    trend: 'down',
-    change: 2,
-  },
-  {
-    rank: 5,
-    name: 'Lisa Anderson',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lisa',
-    xp: 6890,
-    level: 11,
-    badges: 8,
-    trend: 'up',
-    change: 1,
-  },
-  {
-    rank: 6,
-    name: 'James Park',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=james',
-    xp: 6450,
-    level: 10,
-    badges: 7,
-    trend: 'stable',
-    change: 0,
-  },
-  {
-    rank: 7,
-    name: 'Diana Martinez',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=diana',
-    xp: 5980,
-    level: 9,
-    badges: 6,
-    trend: 'down',
-    change: 1,
-  },
-  {
-    rank: 8,
-    name: 'Robert Kim',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=robert',
-    xp: 5420,
-    level: 8,
-    badges: 5,
-    trend: 'up',
-    change: 2,
-  },
+const BASE_LEADERBOARD = [
+  { rank: 1, name: 'Daniel Rajput', seed: 'daniel', xp: 8750, level: 15, badges: 12, trend: 'up' as const, change: 2 },
+  { rank: 2, name: 'Mike Rodriguez', seed: 'mike', xp: 8420, level: 14, badges: 11, trend: 'down' as const, change: 1 },
+  { rank: 3, name: 'Emma Wilson', seed: 'emma', xp: 7890, level: 13, badges: 10, trend: 'up' as const, change: 3 },
+  { rank: 4, name: 'Alex Johnson', seed: 'alex', xp: 7340, level: 12, badges: 9, trend: 'down' as const, change: 2 },
+  { rank: 5, name: 'Lisa Anderson', seed: 'lisa', xp: 6890, level: 11, badges: 8, trend: 'up' as const, change: 1 },
+  { rank: 6, name: 'James Park', seed: 'james', xp: 6450, level: 10, badges: 7, trend: 'stable' as const, change: 0 },
+  { rank: 7, name: 'Diana Martinez', seed: 'diana', xp: 5980, level: 9, badges: 6, trend: 'down' as const, change: 1 },
+  { rank: 8, name: 'Robert Kim', seed: 'robert', xp: 5420, level: 8, badges: 5, trend: 'up' as const, change: 2 },
 ]
 
-const getRankMedal = (rank: number) => {
-  switch (rank) {
-    case 1:
-      return '🥇'
-    case 2:
-      return '🥈'
-    case 3:
-      return '🥉'
-    default:
-      return ''
-  }
-}
-
 export function Leaderboard() {
-  const currentUser = leaderboardData[2]
+  const { user } = useAuth()
+
+  const currentUserEntry = user
+    ? {
+        rank: 3,
+        name: user.name,
+        seed: user.email,
+        xp: user.xp ?? 0,
+        level: user.level ?? 1,
+        badges: 6,
+        trend: 'up' as const,
+        change: 1,
+      }
+    : BASE_LEADERBOARD[2]
+
+  const leaderboardData = BASE_LEADERBOARD.map((entry) =>
+    user && entry.rank === currentUserEntry.rank
+      ? { ...currentUserEntry, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}` }
+      : { ...entry, avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.seed}` },
+  )
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Global Leaderboard</h2>
-        <p className="text-foreground/60 mt-1">Top ESG champions in your organization</p>
+        <p className="mt-1 text-muted-foreground">Top ESG champions in your organization — July 2026</p>
       </div>
 
-      {/* Your Rank Card */}
       <Card className="border-primary/30 bg-primary/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Medal className="w-5 h-5" />
-            Your Rank
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2"><Medal className="size-5" />Your Rank</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Avatar className="w-12 h-12">
-                <AvatarImage src={currentUser.avatar} />
-                <AvatarFallback>{currentUser.name.split(' ')[0][0]}</AvatarFallback>
+              <Avatar className="size-12">
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email ?? 'guest'}`} />
+                <AvatarFallback>{currentUserEntry.name.split(' ').map((n) => n[0]).join('')}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold">{currentUser.name}</p>
-                <p className="text-sm text-foreground/60">Level {currentUser.level}</p>
+                <p className="font-semibold">{currentUserEntry.name}</p>
+                <p className="text-sm text-muted-foreground">Level {currentUserEntry.level}</p>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-6 text-right">
-              <div>
-                <p className="text-2xl font-bold">{currentUser.xp}</p>
-                <p className="text-xs text-foreground/60">XP</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold">#{currentUser.rank}</p>
-                <p className="text-xs text-foreground/60">Rank</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{currentUser.badges}</p>
-                <p className="text-xs text-foreground/60">Badges</p>
-              </div>
+              <div><p className="font-numeric text-2xl font-bold">{currentUserEntry.xp.toLocaleString()}</p><p className="text-xs text-muted-foreground">XP</p></div>
+              <div><p className="font-numeric text-2xl font-bold">#{currentUserEntry.rank}</p><p className="text-xs text-muted-foreground">Rank</p></div>
+              <div><p className="font-numeric text-2xl font-bold">{currentUserEntry.badges}</p><p className="text-xs text-muted-foreground">Badges</p></div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Leaderboard Table */}
       <Card>
         <CardHeader>
           <CardTitle>Top Performers</CardTitle>
           <CardDescription>This month&apos;s leading ESG contributors</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {leaderboardData.map((user) => (
-              <div key={user.rank} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-background/50 transition">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="w-8 text-center font-bold">
-                    {user.rank <= 3 ? (
-                      <span className="text-lg">{getRankMedal(user.rank)}</span>
-                    ) : (
-                      <span className="text-lg">{user.rank}</span>
-                    )}
-                  </div>
-
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback>{user.name.split(' ')[0][0]}</AvatarFallback>
-                  </Avatar>
-
-                  <div className="flex-1">
-                    <p className="font-medium">{user.name}</p>
-                    <p className="text-xs text-foreground/60">Level {user.level}</p>
-                  </div>
+        <CardContent className="space-y-2">
+          {leaderboardData.map((entry) => (
+            <div key={entry.rank} className="flex items-center justify-between rounded-lg border border-border p-3 transition hover:bg-accent/30">
+              <div className="flex flex-1 items-center gap-3">
+                <div className="w-8 text-center font-bold">
+                  {entry.rank <= 3 ? ['🥇', '🥈', '🥉'][entry.rank - 1] : entry.rank}
                 </div>
-
-                <div className="flex items-center gap-8 text-right">
-                  <div>
-                    <p className="font-bold">{user.xp}</p>
-                    <p className="text-xs text-foreground/60">XP</p>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    {user.badges > 0 && (
-                      <>
-                        <span className="text-lg">🏅</span>
-                        <span className="text-sm font-medium">{user.badges}</span>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="w-16 flex items-center justify-end">
-                    {user.trend === 'up' && (
-                      <Badge variant="default" className="gap-1">
-                        <TrendingUp className="w-3 h-3" />
-                        +{user.change}
-                      </Badge>
-                    )}
-                    {user.trend === 'down' && (
-                      <Badge variant="secondary" className="gap-1">
-                        ↓ {user.change}
-                      </Badge>
-                    )}
-                    {user.trend === 'stable' && (
-                      <Badge variant="outline">−</Badge>
-                    )}
-                  </div>
+                <Avatar className="size-10">
+                  <AvatarImage src={entry.avatar} />
+                  <AvatarFallback>{entry.name[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{entry.name}{user?.name === entry.name ? ' (You)' : ''}</p>
+                  <p className="text-xs text-muted-foreground">Level {entry.level}</p>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="flex items-center gap-6">
+                <div className="text-right">
+                  <p className="font-bold">{entry.xp.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">XP</p>
+                </div>
+                <span>🏅 {entry.badges}</span>
+                {entry.trend === 'up' && <Badge className="gap-1"><TrendingUp className="size-3" />+{entry.change}</Badge>}
+                {entry.trend === 'down' && <Badge variant="secondary">↓ {entry.change}</Badge>}
+                {entry.trend === 'stable' && <Badge variant="outline">−</Badge>}
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
     </div>

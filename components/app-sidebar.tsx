@@ -66,7 +66,7 @@ export function AppSidebar() {
           <SidebarMenu>
             {items.map((item) => {
               const active = isActivePath(pathname, item.href)
-              const alertCount = item.label === 'Governance' ? 5 : undefined
+              const alertCount = item.label === 'Alerts' ? 3 : undefined
 
               if (!item.children) {
                 return (

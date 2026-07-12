@@ -27,4 +27,6 @@ export interface AuthContextType {
   logout: () => Promise<void>
   switchRole: (role: UserRole) => Promise<void>
   updateProfile: (updates: Partial<User>) => Promise<void>
+  deductXp: (amount: number) => Promise<void>
+  addXp: (amount: number) => Promise<void>
 }

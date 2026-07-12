@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, UserRole, AuthContextType } from '@/types/auth'
 import { validateCredentials, registerNewAccount } from './mock-accounts'
+import { stableUserId, updateAccount } from './account-store'
 import { getUserGamificationStats } from '@/lib/esg-data'
 import {
   clearSessionCookie,
@@ -17,7 +18,7 @@ function enrichUser(user: User): User {
   return {
     ...user,
     level: user.level ?? stats.level,
-    xp: user.xp ?? stats.xp,
+    xp: user.xp !== undefined && user.xp !== null ? user.xp : stats.xp,
     streak: user.streak ?? stats.streak,
   }
 }
@@ -56,13 +57,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const account = validateCredentials(email, password)
       if (!account) throw new Error('Invalid email or password')
 
+      const existingRaw = localStorage.getItem('user')
+      let preserved: Partial<User> = {}
+      if (existingRaw) {
+        try {
+          const existing = JSON.parse(existingRaw) as User
+          if (existing.email.toLowerCase() === email.toLowerCase()) {
+            preserved = { xp: existing.xp, level: existing.level, streak: existing.streak }
+          }
+        } catch { /* ignore */ }
+      }
+
       const nextUser = enrichUser({
-        id: Math.random().toString(36).slice(2, 11),
+        id: stableUserId(account.email),
         email: account.email,
         name: account.name,
         role: account.role,
         department: account.department,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
+        ...preserved,
       })
 
       const token = createSessionToken()
@@ -88,22 +101,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ) => {
     setIsLoading(true)
     try {
-      const registered = registerNewAccount({
-        email,
-        password,
-        name,
-        role,
-        department,
-      })
+      const registered = registerNewAccount({ email, password, name, role, department })
       if (!registered) throw new Error('Email already registered')
 
       const nextUser = enrichUser({
-        id: Math.random().toString(36).slice(2, 11),
-        email,
+        id: stableUserId(email),
+        email: email.toLowerCase(),
         name,
         role,
         department,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
       })
 
       const token = createSessionToken()
@@ -123,7 +130,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     setIsLoading(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300))
       localStorage.removeItem('user')
       localStorage.removeItem('sessionToken')
       clearSessionCookie()
@@ -137,8 +143,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return
     setIsLoading(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300))
       const updatedUser = enrichUser({ ...user, role: newRole })
+      updateAccount(user.email, { role: newRole })
       const token = localStorage.getItem('sessionToken') ?? createSessionToken()
       persistUser(updatedUser, token)
       setUser(updatedUser)
@@ -150,9 +156,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateProfile = async (updates: Partial<User>) => {
     if (!user) return
     const updatedUser = enrichUser({ ...user, ...updates })
+    if (updates.name || updates.department) {
+      updateAccount(user.email, {
+        name: updates.name ?? user.name,
+        department: updates.department ?? user.department ?? 'Operations',
+      })
+    }
     const token = localStorage.getItem('sessionToken') ?? createSessionToken()
     persistUser(updatedUser, token)
     setUser(updatedUser)
+  }
+
+  const deductXp = async (amount: number) => {
+    if (!user) throw new Error('Not authenticated')
+    const currentXp = user.xp ?? 0
+    if (currentXp < amount) throw new Error('Insufficient XP')
+    await updateProfile({ xp: currentXp - amount })
+  }
+
+  const addXp = async (amount: number) => {
+    if (!user) throw new Error('Not authenticated')
+    await updateProfile({ xp: (user.xp ?? 0) + amount })
   }
 
   return (
@@ -166,6 +190,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         switchRole,
         updateProfile,
+        deductXp,
+        addXp,
       }}
     >
       {children}
